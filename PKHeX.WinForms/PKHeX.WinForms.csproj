@@ -32,6 +32,13 @@
     <ProjectReference Include="..\PKHeX.Drawing.Misc\PKHeX.Drawing.Misc.csproj" />
     <ProjectReference Include="..\PKHeX.Drawing.PokeSprite\PKHeX.Drawing.PokeSprite.csproj" />
     <ProjectReference Include="..\PKHeX.Drawing\PKHeX.Drawing.csproj" />
+    <ProjectReference Include="..\PKHeX.PokePic\PKHeX.PokePic.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="XmlPictureCreation">
+      <HintPath>..\..\..\XmlPictureCreation\XmlPictureCreation\bin\Debug\net8.0-windows\XmlPictureCreation.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +60,21 @@
     <EmbeddedResource Update="Subforms\Save Editors\SAV_Inventory.resx">
       <DependentUpon>SAV_Inventory.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="PokePic\Default1\preview.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PokePic\Default1\config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PokePic\Default2\preview.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PokePic\Default2\config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

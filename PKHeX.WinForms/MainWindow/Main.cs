@@ -15,6 +15,7 @@ using PKHeX.Drawing;
 using PKHeX.Drawing.Misc;
 using PKHeX.Drawing.PokeSprite;
 using PKHeX.WinForms.Controls;
+using PKHeX.PokePic;
 using static PKHeX.Core.MessageStrings;
 
 namespace PKHeX.WinForms;
@@ -309,6 +310,21 @@ public partial class Main : Form
             return;
         PKM pk = PreparePKM();
         WinFormsUtil.SavePKMDialog(pk);
+    }
+
+    private void MainMenuSavePic(object sender, EventArgs e)
+    {
+        if (!PKME_Tabs.EditsComplete)
+            return;
+        PKM pk = PreparePKM();
+
+        if (!Path.Exists("PokePic"))
+            MessageBox.Show(@"Folder ""PokePic"" not found!");
+
+        new PokePic_Selector(pk).ShowDialog();
+
+        //
+
     }
 
     private void MainMenuExit(object sender, EventArgs e)
@@ -1364,4 +1380,6 @@ public partial class Main : Form
     private void ClickUndo(object sender, EventArgs e) => C_SAV.ClickUndo();
     private void ClickRedo(object sender, EventArgs e) => C_SAV.ClickRedo();
     #endregion
+
+
 }

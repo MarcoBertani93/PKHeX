@@ -30,6 +30,7 @@ namespace PKHeX.WinForms
         public void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             menuStrip1 = new System.Windows.Forms.MenuStrip();
             Menu_File = new System.Windows.Forms.ToolStripMenuItem();
             Menu_Open = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,6 +68,7 @@ namespace PKHeX.WinForms
             PKME_Tabs = new Controls.PKMEditor();
             C_SAV = new Controls.SAVEditor();
             splitContainer2 = new System.Windows.Forms.SplitContainer();
+            Menu_SavePic = new System.Windows.Forms.ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -95,7 +97,7 @@ namespace PKHeX.WinForms
             // 
             // Menu_File
             // 
-            Menu_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Menu_Open, Menu_Save, Menu_ExportSAV, Menu_Exit });
+            Menu_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Menu_Open, Menu_Save, Menu_ExportSAV, Menu_Exit, Menu_SavePic });
             Menu_File.Name = "Menu_File";
             Menu_File.Size = new System.Drawing.Size(37, 20);
             Menu_File.Text = "File";
@@ -106,7 +108,7 @@ namespace PKHeX.WinForms
             Menu_Open.Name = "Menu_Open";
             Menu_Open.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O;
             Menu_Open.ShowShortcutKeys = false;
-            Menu_Open.Size = new System.Drawing.Size(133, 22);
+            Menu_Open.Size = new System.Drawing.Size(180, 22);
             Menu_Open.Text = "&Open...";
             Menu_Open.Click += MainMenuOpen;
             // 
@@ -116,7 +118,7 @@ namespace PKHeX.WinForms
             Menu_Save.Name = "Menu_Save";
             Menu_Save.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
             Menu_Save.ShowShortcutKeys = false;
-            Menu_Save.Size = new System.Drawing.Size(133, 22);
+            Menu_Save.Size = new System.Drawing.Size(180, 22);
             Menu_Save.Text = "&Save PKM...";
             Menu_Save.Click += MainMenuSave;
             // 
@@ -126,7 +128,7 @@ namespace PKHeX.WinForms
             Menu_ExportSAV.Name = "Menu_ExportSAV";
             Menu_ExportSAV.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E;
             Menu_ExportSAV.ShowShortcutKeys = false;
-            Menu_ExportSAV.Size = new System.Drawing.Size(133, 22);
+            Menu_ExportSAV.Size = new System.Drawing.Size(180, 22);
             Menu_ExportSAV.Text = "&Export SAV...";
             Menu_ExportSAV.Click += ClickExportSAV;
             // 
@@ -136,7 +138,7 @@ namespace PKHeX.WinForms
             Menu_Exit.Name = "Menu_Exit";
             Menu_Exit.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q;
             Menu_Exit.ShowShortcutKeys = false;
-            Menu_Exit.Size = new System.Drawing.Size(133, 22);
+            Menu_Exit.Size = new System.Drawing.Size(180, 22);
             Menu_Exit.Text = "&Quit";
             Menu_Exit.Click += MainMenuExit;
             // 
@@ -152,7 +154,7 @@ namespace PKHeX.WinForms
             Menu_Showdown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Menu_ShowdownImportPKM, Menu_ShowdownExportPKM, Menu_ShowdownExportParty, Menu_ShowdownExportCurrentBox });
             Menu_Showdown.Image = Properties.Resources.showdown;
             Menu_Showdown.Name = "Menu_Showdown";
-            Menu_Showdown.Size = new System.Drawing.Size(133, 22);
+            Menu_Showdown.Size = new System.Drawing.Size(180, 22);
             Menu_Showdown.Text = "Showdown";
             // 
             // Menu_ShowdownImportPKM
@@ -196,7 +198,7 @@ namespace PKHeX.WinForms
             Menu_Data.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { Menu_LoadBoxes, Menu_DumpBoxes, Menu_DumpBox, Menu_Report, Menu_Database, Menu_MGDatabase, Menu_EncDatabase, Menu_BatchEditor });
             Menu_Data.Image = Properties.Resources.data;
             Menu_Data.Name = "Menu_Data";
-            Menu_Data.Size = new System.Drawing.Size(133, 22);
+            Menu_Data.Size = new System.Drawing.Size(180, 22);
             Menu_Data.Text = "Data";
             // 
             // Menu_LoadBoxes
@@ -279,7 +281,7 @@ namespace PKHeX.WinForms
             Menu_Folder.Name = "Menu_Folder";
             Menu_Folder.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F;
             Menu_Folder.ShowShortcutKeys = false;
-            Menu_Folder.Size = new System.Drawing.Size(133, 22);
+            Menu_Folder.Size = new System.Drawing.Size(180, 22);
             Menu_Folder.Text = "Open Folder";
             Menu_Folder.Click += MainMenuFolder;
             // 
@@ -474,6 +476,13 @@ namespace PKHeX.WinForms
             splitContainer2.SplitterWidth = 1;
             splitContainer2.TabIndex = 106;
             // 
+            // Menu_SavePic
+            // 
+            Menu_SavePic.Name = "Menu_SavePic";
+            Menu_SavePic.Size = new System.Drawing.Size(180, 22);
+            Menu_SavePic.Text = "Save PokéPic";
+            Menu_SavePic.Click += MainMenuSavePic;
+            // 
             // Main
             // 
             AllowDrop = true;
@@ -546,6 +555,7 @@ namespace PKHeX.WinForms
         private System.Windows.Forms.SplitContainer splitContainer2;
         private PKHeX.WinForms.Controls.SelectablePictureBox dragout;
         private System.Windows.Forms.PictureBox PB_Legal;
+        private System.Windows.Forms.ToolStripMenuItem Menu_SavePic;
     }
 }
 
