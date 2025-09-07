@@ -1,4 +1,3 @@
-using PKHeX.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,15 +5,15 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using PKHeX.Core;
+using XmlPictureCreation;
 using XmlPictureCreation.Aliases;
-using XmlPictureCreation.Objects;
-using XmlPictureCreation.Objects.Interfaces;
 
 namespace PKHeX.PokePic
 {
     internal class PkHelper
     {
-        public static void GetValues(PKM pk)
+        public static VariabileCollection GetValues(PKM pk)
         {
             VariabileCollection variables = new();
 
@@ -134,6 +133,8 @@ namespace PKHeX.PokePic
 
             var serialized = JsonSerializer.Serialize(dict, new JsonSerializerOptions { WriteIndented = true });
 #endif
+
+            return variables;
         }
 
         private static void AddCurrentLocaleVariables(PKM pk, VariabileCollection variables)
@@ -182,3 +183,4 @@ namespace PKHeX.PokePic
     }
 
 }
+

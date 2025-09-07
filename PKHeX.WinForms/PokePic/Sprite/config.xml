@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ImageConfig width="800" height="600">
+
+    <Resources>
+        <Image name="sprite">
+            <File></File>
+        </Image>
+    </Resources>
+    <Graphics>
+
+        <Image ref="">
+            <Area ref="banana">
+                <X>10</X>
+                <Y>20</Y>
+            </Area>
+            <Color>
+                <Linear start="10,20" end="60,110">
+                    <Stops>
+                        <Stop position="0.1" solid="#11AA55"></Stop>
+                        <Stop>0.99,#BB0022</Stop>
+                        <Stop>
+                            <Position>0.7</Position>
+                            <Solid>#5500EE</Solid>
+                        </Stop>
+                    </Stops>
+                </Linear>
+
+            </Color>
+            <Border width="5" color="#FF8800" alignment="outset"/>
+        </Image>
+
+    </Graphics>
+
+    <Variables>
+        <Area id="banana">
+            <Width>100</Width>
+            <Height>200</Height>
+        </Area>
+    </Variables>
+
+</ImageConfig>

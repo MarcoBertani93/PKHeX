@@ -275,6 +275,7 @@ public partial class Main : Form
         try
         {
             Plugins.AddRange(PluginLoader.LoadPlugins<IPlugin>(PluginPath, Settings.Startup.PluginLoadMethod));
+            Plugins.Add(new PokePicPlugin());
         }
         catch (InvalidCastException c)
         {

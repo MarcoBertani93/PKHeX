@@ -1,4 +1,3 @@
-using PKHeX.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +9,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PKHeX.Core;
 using XmlPictureCreation;
+//using XmlPictureCreation;
 
 namespace PKHeX.PokePic
 {
@@ -23,7 +24,7 @@ namespace PKHeX.PokePic
         public PokePic_Selector(PKM pk)
         {
             this.pk = pk;
-            
+
             StartPosition = FormStartPosition.CenterParent;
             InitializeComponent();
 
@@ -62,12 +63,15 @@ namespace PKHeX.PokePic
             LoadPreview(ConfigList.SelectedIndex);
         }
 
-        void LoadPreview(int index)
+        async void LoadPreview(int index)
         {
             try
             {
                 var config = pokePicConfigs[index];
                 Image image = null;
+
+                var result = await CreateImage(pk, config.ConfigFile);
+
                 if (File.Exists(config.PreviewFileJpg))
                 {
                     image = Image.FromFile(config.PreviewFileJpg);
@@ -75,6 +79,10 @@ namespace PKHeX.PokePic
                 else if (File.Exists(config.PreviewFilePng))
                 {
                     image = Image.FromFile(config.PreviewFilePng);
+                }
+                else if(result.Success)
+                {
+                    image = result.Bitmap!;
                 }
                 else
                 {
@@ -164,48 +172,59 @@ namespace PKHeX.PokePic
         }
 
 
-
-        static void CreateImage(PKM pk, string configFile)
+        static async Task<ProcessResult> CreateImage(PKM pk, string configFile)
         {
-            using (var creator = new Creator())
+            using var creator = new Creator();
+
+            var variables = PkHelper.GetValues(pk);
+            creator.AddVariables(variables);
+
+            var result = await creator.Process(configFile);
+
+
+            return result;
+        }
+
+        static async void SaveImage(PKM pk, string configFile)
+        {
+
+
+            var result = await CreateImage(pk, configFile);
+
+            foreach (var error in result.Errors)
+                Console.WriteLine($"ERR: {error.Message}");
+
+            var message = string.Join(Environment.NewLine, result.Errors.Select(e => e.Message).ToArray());
+
+            if (result.Success)
             {
-                var result = creator.Process(configFile);
-
-                foreach (var error in result.Errors)
-                    Console.WriteLine($"ERR: {error.Message}");
-
-                var message = string.Join(Environment.NewLine, result.Errors.Select(e => e.Message).ToArray());
-
-                if (result.Success)
+                var title = "SUCCESS!";
+                if (result.Errors.Length > 0)
                 {
-                    var title = "SUCCESS!";
-                    if (result.Errors.Length > 0)
-                    {
-                        title += string.Format(" ({0} error{1})", result.Errors.Length, result.Errors.Length > 1 ? "s" : "");
-                        message += Environment.NewLine;
-                        message += Environment.NewLine;
-                        message += "Fix your configuration file for a better result!";
-                    }
-                    MessageBox.Show(message, title);
-                    result.Bitmap!.Save("result.png", System.Drawing.Imaging.ImageFormat.Png);
-                }
-                else
-                {
-                    var title = string.Format("FAIL! ({0} error{1})", result.Errors.Length, result.Errors.Length > 1 ? "s" : "");
+                    title += string.Format(" ({0} error{1})", result.Errors.Length, result.Errors.Length > 1 ? "s" : "");
                     message += Environment.NewLine;
                     message += Environment.NewLine;
-                    message += "Fix your configuration file and try again";
-                    MessageBox.Show(message, title);
+                    message += "Fix your configuration file for a better result!";
                 }
+                MessageBox.Show(message, title);
+                result.Bitmap!.Save("result.png", System.Drawing.Imaging.ImageFormat.Png);
+            }
+            else
+            {
+                var title = string.Format("FAIL! ({0} error{1})", result.Errors.Length, result.Errors.Length > 1 ? "s" : "");
+                message += Environment.NewLine;
+                message += Environment.NewLine;
+                message += "Fix your configuration file and try again";
+                MessageBox.Show(message, title);
             }
         }
+
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
             var index = ConfigList.SelectedIndex;
-            PkHelper.GetValues(pk);
 
-            CreateImage(pk, pokePicConfigs[index].ConfigFile);
+            SaveImage(pk, pokePicConfigs[index].ConfigFile);
         }
     }
 
