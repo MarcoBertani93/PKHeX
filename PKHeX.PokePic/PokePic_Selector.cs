@@ -174,21 +174,18 @@ namespace PKHeX.PokePic
 
         static async Task<ProcessResult> CreateImage(PKM pk, string configFile)
         {
-            using var creator = new Creator();
+            using var creator = new XmlPictureCreator();
 
-            var variables = PkHelper.GetValues(pk);
-            creator.AddVariables(variables);
-
+            PkmHelper.AddVariables(creator, pk);
+            PkmHelper.AddImages(creator, pk);
+            
             var result = await creator.Process(configFile);
-
 
             return result;
         }
 
         static async void SaveImage(PKM pk, string configFile)
         {
-
-
             var result = await CreateImage(pk, configFile);
 
             foreach (var error in result.Errors)

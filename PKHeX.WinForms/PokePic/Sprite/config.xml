@@ -1,41 +1,45 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ImageConfig width="800" height="600">
+<ImageConfig width="68" height="56">
 
     <Resources>
         <Image name="sprite">
-            <File></File>
+            <File value="regular/{0}.png">
+                <String ref="pokemonName"/>
+            </File>
         </Image>
     </Resources>
+
     <Graphics>
 
-        <Image ref="">
-            <Area ref="banana">
-                <X>10</X>
-                <Y>20</Y>
-            </Area>
+
+        <Rectangle area="0,0,68,56" radius="10">
             <Color>
-                <Linear start="10,20" end="60,110">
+                <Linear start="0,0" end="68,0">
                     <Stops>
-                        <Stop position="0.1" solid="#11AA55"></Stop>
-                        <Stop>0.99,#BB0022</Stop>
-                        <Stop>
-                            <Position>0.7</Position>
-                            <Solid>#5500EE</Solid>
+                        <Stop position="0">
+                            <Solid ref="type1.color"/>
+                        </Stop>
+                        <Stop position="1">
+                            <Solid ref="type2.color"/>
                         </Stop>
                     </Stops>
                 </Linear>
-
             </Color>
-            <Border width="5" color="#FF8800" alignment="outset"/>
+        </Rectangle>
+
+
+        <Image name="species.sprite">
+            <Area>
+                <X>0</X>
+                <Y>0</Y>
+                <Width ref="species.sprite.Width"/>
+                <Height ref="species.sprite.Height"/>
+            </Area>
         </Image>
 
     </Graphics>
 
     <Variables>
-        <Area id="banana">
-            <Width>100</Width>
-            <Height>200</Height>
-        </Area>
+        <String id="pokemonName">Hypno</String>
     </Variables>
 
 </ImageConfig>
