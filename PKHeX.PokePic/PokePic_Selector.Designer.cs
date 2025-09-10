@@ -38,7 +38,7 @@ namespace PKHeX.PokePic
             // SaveButton
             // 
             SaveButton.AccessibleName = "SaveButton";
-            SaveButton.Location = new Point(343, 217);
+            SaveButton.Location = new Point(497, 326);
             SaveButton.Name = "SaveButton";
             SaveButton.Size = new Size(75, 23);
             SaveButton.TabIndex = 2;
@@ -50,9 +50,9 @@ namespace PKHeX.PokePic
             // 
             ConfigList.AccessibleName = "Config List";
             ConfigList.FormattingEnabled = true;
-            ConfigList.Location = new Point(218, 12);
+            ConfigList.Location = new Point(372, 12);
             ConfigList.Name = "ConfigList";
-            ConfigList.Size = new Size(200, 199);
+            ConfigList.Size = new Size(200, 304);
             ConfigList.TabIndex = 3;
             // 
             // PreviewBox
@@ -60,7 +60,7 @@ namespace PKHeX.PokePic
             PreviewBox.AccessibleName = "Preview Box";
             PreviewBox.Location = new Point(12, 12);
             PreviewBox.Name = "PreviewBox";
-            PreviewBox.Size = new Size(200, 199);
+            PreviewBox.Size = new Size(354, 304);
             PreviewBox.TabIndex = 4;
             PreviewBox.TabStop = false;
             // 
@@ -68,7 +68,7 @@ namespace PKHeX.PokePic
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(436, 250);
+            ClientSize = new Size(584, 361);
             Controls.Add(PreviewBox);
             Controls.Add(ConfigList);
             Controls.Add(SaveButton);

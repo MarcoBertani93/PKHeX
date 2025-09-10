@@ -29,6 +29,7 @@ namespace PKHeX.PokePic
             var species = pkm.Species;
 
             variables.Add($"species", species);
+            variables.Add($"level", pkm.CurrentLevel);
             variables.Add($"generation", pkm.Generation);
             variables.Add($"type1", pkm.PersonalInfo.Type1);
             variables.Add($"type2", pkm.PersonalInfo.Type2);
@@ -100,10 +101,10 @@ namespace PKHeX.PokePic
             variables.Add($"stats.val.spd", pkm.Stat_SPD);
 
             variables.Add($"moves", pkm.MoveCount);
-            variables.Add($"move1", pkm.MoveCount >= 1);
-            variables.Add($"move2", pkm.MoveCount >= 2);
-            variables.Add($"move3", pkm.MoveCount >= 3);
-            variables.Add($"move4", pkm.MoveCount >= 4);
+            variables.Add($"hasMove1", pkm.MoveCount >= 1);
+            variables.Add($"hasMove2", pkm.MoveCount >= 2);
+            variables.Add($"hasMove3", pkm.MoveCount >= 3);
+            variables.Add($"hasMove4", pkm.MoveCount >= 4);
 
             variables.Add($"move1.type", MoveInfo.GetType(pkm.Move1, pkm.Context));
             variables.Add($"move2.type", MoveInfo.GetType(pkm.Move2, pkm.Context));
@@ -149,11 +150,11 @@ namespace PKHeX.PokePic
                 var move1color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move1, pkm.Context)])!;
                 creator.AddVariable("move1.type.color", move1color);
                 var move2color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move2, pkm.Context)])!;
-                creator.AddVariable("move2.type.color", move1color);
+                creator.AddVariable("move2.type.color", move2color);
                 var move3color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move3, pkm.Context)])!;
-                creator.AddVariable("move3.type.color", move1color);
+                creator.AddVariable("move3.type.color", move3color);
                 var move4color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move4, pkm.Context)])!;
-                creator.AddVariable("move4.type.color", move1color);
+                creator.AddVariable("move4.type.color", move4color);
             }
 
 #if DEBUG
