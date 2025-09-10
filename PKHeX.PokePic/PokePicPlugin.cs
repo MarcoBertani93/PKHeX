@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PKHeX.Core;
 using PKHeX.PokePic;
+using PKHeX.PokePic.Helpers;
 
 namespace PKHeX.WinForms
 {
@@ -19,6 +20,8 @@ namespace PKHeX.WinForms
 
         public ISaveFileProvider SaveFileEditor { get; private set; } = null!;
         protected IPKMView PKMEditor { get; private set; } = null!;
+
+        private readonly AsyncDataLoader dataLoader = new();
 
         public void Initialize(params object[] args)
         {
@@ -37,7 +40,7 @@ namespace PKHeX.WinForms
 
         }
 
-        
+
         private void LoadMenuStrip(ToolStrip menuStrip)
         {
             var items = menuStrip.Items;
@@ -50,9 +53,9 @@ namespace PKHeX.WinForms
             exportPic.Click += MainMenuSavePic;
             modMenu.DropDownItems.Add(exportPic);
             modMenu.DropDownItems.Add(new ToolStripMenuItem("Import from PokéPic"));
-            
+
             tools.DropDownItems.Add(modMenu);
-            
+
             /*
             if (items.Find(ParentMenuParent, false)[0] is not ToolStripDropDownItem tools)
                 return;
@@ -61,7 +64,7 @@ namespace PKHeX.WinForms
             var modmenu = GetModMenu(tools, modmenusearch);
             AddPluginControl(modmenu);*/
         }
-        
+
 
         public virtual void NotifySaveLoaded()
         {
@@ -88,8 +91,8 @@ namespace PKHeX.WinForms
             var pk = PKMEditor.Data;
 
 
-            new PokePic_Selector(pk).ShowDialog();
-            
+            new ExportForm(dataLoader, pk).ShowDialog();
+
         }
     }
 }

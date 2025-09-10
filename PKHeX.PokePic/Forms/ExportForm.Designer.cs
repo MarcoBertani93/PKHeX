@@ -1,6 +1,6 @@
 namespace PKHeX.PokePic
 {
-    partial class PokePic_Selector
+    partial class ExportForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,10 +28,11 @@ namespace PKHeX.PokePic
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PokePic_Selector));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExportForm));
             SaveButton = new Button();
             ConfigList = new ListBox();
             PreviewBox = new PictureBox();
+            listPanel = new Panel();
             ((System.ComponentModel.ISupportInitialize)PreviewBox).BeginInit();
             SuspendLayout();
             // 
@@ -52,7 +53,7 @@ namespace PKHeX.PokePic
             ConfigList.FormattingEnabled = true;
             ConfigList.Location = new Point(372, 12);
             ConfigList.Name = "ConfigList";
-            ConfigList.Size = new Size(200, 304);
+            ConfigList.Size = new Size(169, 304);
             ConfigList.TabIndex = 3;
             // 
             // PreviewBox
@@ -64,18 +65,30 @@ namespace PKHeX.PokePic
             PreviewBox.TabIndex = 4;
             PreviewBox.TabStop = false;
             // 
-            // PokePic_Selector
+            // listPanel
+            // 
+            listPanel.AutoScroll = true;
+            listPanel.BackColor = SystemColors.Window;
+            listPanel.BorderStyle = BorderStyle.FixedSingle;
+            listPanel.Location = new Point(547, 12);
+            listPanel.Name = "listPanel";
+            listPanel.Size = new Size(199, 304);
+            listPanel.TabIndex = 5;
+            // 
+            // ExportForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(584, 361);
+            ClientSize = new Size(758, 361);
+            Controls.Add(listPanel);
             Controls.Add(PreviewBox);
             Controls.Add(ConfigList);
             Controls.Add(SaveButton);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "PokePic_Selector";
+            Name = "ExportForm";
             Text = "PokePic_Selector";
+            FormClosed += ExportForm_FormClosed;
             ((System.ComponentModel.ISupportInitialize)PreviewBox).EndInit();
             ResumeLayout(false);
         }
@@ -84,5 +97,6 @@ namespace PKHeX.PokePic
         private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.ListBox ConfigList;
         private PictureBox PreviewBox;
+        private Panel listPanel;
     }
 }

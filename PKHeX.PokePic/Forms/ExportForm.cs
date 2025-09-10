@@ -10,26 +10,63 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PKHeX.Core;
+using PKHeX.PokePic.Helpers;
+using PKHeX.PokePic.ViewModels;
 using XmlPictureCreation;
 //using XmlPictureCreation;
 
 namespace PKHeX.PokePic
 {
 
-    public partial class PokePic_Selector : Form
+    public partial class ExportForm : Form
     {
-        List<PokePicConfig> pokePicConfigs = new List<PokePicConfig>();
-        readonly PKM pk;
+        private readonly List<PokePicConfig> _pokePicConfigs = [];
+        private readonly PKM _pkm;
+        private readonly AsyncDataLoader _asyncDataLoader;
 
-        public PokePic_Selector(PKM pk)
+        public ExportForm(AsyncDataLoader asyncDataLoader, PKM pk)
         {
-            this.pk = pk;
+            _pkm = pk;
+            _asyncDataLoader = asyncDataLoader;
 
             StartPosition = FormStartPosition.CenterParent;
             InitializeComponent();
 
             PreviewBox.SizeMode = PictureBoxSizeMode.CenterImage;
-            LoadFiles();
+            //LoadFiles();
+
+            _asyncDataLoader.ProcessorLoaded += _asyncDataLoader_ItemLoaded;
+
+            foreach (var namedProcessor in _asyncDataLoader.NamedProcessors)
+            {
+                var vm = new ListItemViewModel()
+                {
+                    Text = namedProcessor.Name,
+                    Errors = [.. namedProcessor.Errors.Select(err => err.Message)]
+                };
+
+                var control = new ListItemControl()
+                {
+                    ViewModel = vm,
+                    Dock = DockStyle.Top
+                };
+
+                control.Click += (s, e) =>
+                {
+                    MessageBox.Show($"Clicked on {namedProcessor.Name}");
+                };
+
+                //var config = new PokePicConfig(Path.GetDirectoryName(namedProcessor.Name) ?? "");
+                //_pokePicConfigs.Add(config);
+                //ConfigList.Items.Add(control);
+                listPanel.Controls.Add(control);
+                control.BringToFront();
+            }
+        }
+
+        private void _asyncDataLoader_ItemLoaded(NamedProcessor obj)
+        {
+            throw new NotImplementedException();
         }
 
         private void LoadFiles()
@@ -43,12 +80,12 @@ namespace PKHeX.PokePic
                 {
                     var configDirectoryName = new DirectoryInfo(directory).Name;
                     var config = new PokePicConfig(directory);
-                    pokePicConfigs.Add(config);
+                    _pokePicConfigs.Add(config);
                     ConfigList.Items.Add(config.Name);
                 }
             }
 
-            if (pokePicConfigs.Count == 0)
+            if (_pokePicConfigs.Count == 0)
             {
                 MessageBox.Show("No valid configuration folders found");
                 return;
@@ -67,10 +104,10 @@ namespace PKHeX.PokePic
         {
             try
             {
-                var config = pokePicConfigs[index];
+                var config = _pokePicConfigs[index];
                 Image image = null;
 
-                var result = await CreateImage(pk, config.ConfigFile);
+                var result = await CreateImage(_pkm, config.ConfigFile);
 
                 if (File.Exists(config.PreviewFileJpg))
                 {
@@ -80,7 +117,7 @@ namespace PKHeX.PokePic
                 {
                     image = Image.FromFile(config.PreviewFilePng);
                 }
-                else if(result.Success)
+                else if (result.Success)
                 {
                     image = result.Bitmap!;
                 }
@@ -174,12 +211,14 @@ namespace PKHeX.PokePic
 
         static async Task<ProcessResult> CreateImage(PKM pk, string configFile)
         {
-            using var creator = new XmlPictureCreator();
 
-            PkmHelper.AddVariables(creator, pk);
-            PkmHelper.AddImages(creator, pk);
-            
-            var result = await creator.Process(configFile);
+            var loaderResult = XmlPictureLoader.LoadXml(configFile);
+
+            var result = loaderResult.Processor.Process();
+            //PkmHelper.AddVariables(creator, pk);
+            //PkmHelper.AddImages(creator, pk);
+
+            //var result = await creator.Process(configFile);
 
             return result;
         }
@@ -221,7 +260,12 @@ namespace PKHeX.PokePic
         {
             var index = ConfigList.SelectedIndex;
 
-            SaveImage(pk, pokePicConfigs[index].ConfigFile);
+            SaveImage(_pkm, _pokePicConfigs[index].ConfigFile);
+        }
+
+        private void ExportForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _asyncDataLoader.ProcessorLoaded -= _asyncDataLoader_ItemLoaded;
         }
     }
 

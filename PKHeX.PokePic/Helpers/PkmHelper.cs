@@ -10,15 +10,15 @@ using XmlPictureCreation;
 using XmlPictureCreation.Aliases;
 using XmlPictureCreation.Objects.Interfaces;
 
-namespace PKHeX.PokePic
+namespace PKHeX.PokePic.Helpers
 {
     internal class PkmHelper
     {
         private static readonly Assembly? pokeSpriteAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "PKHeX.Drawing.PokeSprite");
 
-        public static void AddVariables(XmlPictureCreator creator, PKM pkm)
+        public static VariableCollection AddVariables( PKM pkm)
         {
-            VariableCollection variables = new();
+            VariableCollection variables = [];
 
             var str = GameInfo.Strings = GameInfo.GetStrings("it");
 
@@ -123,15 +123,15 @@ namespace PKHeX.PokePic
 
 
             AddCurrentLocaleVariables(pkm, variables);
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.Japanese));
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.English));
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.French));
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.Italian));
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.German));
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.Spanish));
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.Korean));
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.ChineseS));
-            AddLocalizedVariables(pkm, variables, Language.GetLanguageCode(LanguageID.ChineseT));
+            AddLocalizedVariables(pkm, variables, LanguageID.Japanese.GetLanguageCode());
+            AddLocalizedVariables(pkm, variables, LanguageID.English.GetLanguageCode());
+            AddLocalizedVariables(pkm, variables, LanguageID.French.GetLanguageCode());
+            AddLocalizedVariables(pkm, variables, LanguageID.Italian.GetLanguageCode());
+            AddLocalizedVariables(pkm, variables, LanguageID.German.GetLanguageCode());
+            AddLocalizedVariables(pkm, variables, LanguageID.Spanish.GetLanguageCode());
+            AddLocalizedVariables(pkm, variables, LanguageID.Korean.GetLanguageCode());
+            AddLocalizedVariables(pkm, variables, LanguageID.ChineseS.GetLanguageCode());
+            AddLocalizedVariables(pkm, variables, LanguageID.ChineseT.GetLanguageCode());
 
 
             var getTypeSpriteColor = pokeSpriteAssembly?.GetTypes()
@@ -143,18 +143,18 @@ namespace PKHeX.PokePic
             if (getTypeSpriteColor is not null)
             {
                 var color1 = (Color)getTypeSpriteColor?.Invoke(null, [pkm.PersonalInfo.Type1])!;
-                creator.AddVariable("type1.color", color1);
+                variables.Add("type1.color", color1);
                 var color2 = (Color)getTypeSpriteColor?.Invoke(null, [pkm.PersonalInfo.Type2])!;
-                creator.AddVariable("type2.color", color2);
+                variables.Add("type2.color", color2);
 
                 var move1color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move1, pkm.Context)])!;
-                creator.AddVariable("move1.type.color", move1color);
+                variables.Add("move1.type.color", move1color);
                 var move2color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move2, pkm.Context)])!;
-                creator.AddVariable("move2.type.color", move2color);
+                variables.Add("move2.type.color", move2color);
                 var move3color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move3, pkm.Context)])!;
-                creator.AddVariable("move3.type.color", move3color);
+                variables.Add("move3.type.color", move3color);
                 var move4color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move4, pkm.Context)])!;
-                creator.AddVariable("move4.type.color", move4color);
+                variables.Add("move4.type.color", move4color);
             }
 
 #if DEBUG
@@ -166,13 +166,12 @@ namespace PKHeX.PokePic
 
             var serialized = JsonSerializer.Serialize(dict, new JsonSerializerOptions { WriteIndented = true });
 #endif
-
-            creator.AddVariables(variables);
+            return variables;
         }
 
         private static void AddCurrentLocaleVariables(PKM pkm, VariableCollection variables)
         {
-            var localized_Strings = GameInfo.GetStrings(Language.GetLanguageCode(LanguageID.English));
+            var localized_Strings = GameInfo.GetStrings(LanguageID.English.GetLanguageCode());
             variables.Add($"species.name", localized_Strings.specieslist[pkm.Species]);
             variables.Add($"type1.name", localized_Strings.types[pkm.PersonalInfo.Type1]);
             variables.Add($"type2.name", localized_Strings.types[pkm.PersonalInfo.Type2]);
@@ -212,8 +211,9 @@ namespace PKHeX.PokePic
             variables.Add($"ball.name.{lang}", localized_Strings.balllist[pkm.Ball]);
         }
 
-        public static void AddImages(XmlPictureCreator creator, PKM pkm)
+        public static ImageDictionary AddImages(PKM pkm)
         {
+            var images = new ImageDictionary();
             // Try and get the current sprite by loading the PokeSprite assembly that contains the extension method for the sprite:
 
             var getSprite = pokeSpriteAssembly?.GetTypes()
@@ -225,7 +225,7 @@ namespace PKHeX.PokePic
             if (getSprite is not null)
             {
                 var sprite = (Bitmap)getSprite?.Invoke(null, [pkm])!;
-                creator.AddImageResource("species.sprite", sprite);
+                images.Add("species.sprite", sprite);
             }
 
 
@@ -238,7 +238,7 @@ namespace PKHeX.PokePic
             if (getBallSprite is not null)
             {
                 var sprite = (Bitmap)getBallSprite?.Invoke(null, [pkm.Ball])!;
-                creator.AddImageResource("ball.sprite", sprite);
+                images.Add("ball.sprite", sprite);
             }
 
 
@@ -250,22 +250,10 @@ namespace PKHeX.PokePic
             if (getItemSprite is not null)
             {
                 var sprite = (Bitmap)getItemSprite?.Invoke(null, [pkm.HeldItem])!;
-                creator.AddImageResource("heldItem.sprite", sprite);
+                images.Add("heldItem.sprite", sprite);
             }
 
-            /*
-
-
-            public static Bitmap GetBallSprite(byte ball)
-            {
-                string resource = SpriteName.GetResourceStringBall(ball);
-                return (Bitmap?)Resources.ResourceManager.GetObject(resource) ?? Resources._ball4; // Poké Ball (default)
-            }
-
-            public static Bitmap? GetItemSprite(int item) => Resources.ResourceManager.GetObject($"item_{item}") as Bitmap;
-
-
-            */
+            return images;
         }
     }
 

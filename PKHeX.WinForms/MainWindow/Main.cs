@@ -322,7 +322,7 @@ public partial class Main : Form
         if (!Path.Exists("PokePic"))
             MessageBox.Show(@"Folder ""PokePic"" not found!");
 
-        new PokePic_Selector(pk).ShowDialog();
+        //new ExportForm(pk).ShowDialog();
 
         //
 
