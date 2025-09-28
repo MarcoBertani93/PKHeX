@@ -13,6 +13,7 @@ using PKHeX.Core;
 using PKHeX.PokePic.Helpers;
 using PKHeX.PokePic.ViewModels;
 using XmlPictureCreation;
+using XmlPictureCreation.Aliases;
 //using XmlPictureCreation;
 
 namespace PKHeX.PokePic
@@ -20,114 +21,95 @@ namespace PKHeX.PokePic
 
     public partial class ExportForm : Form
     {
-        private readonly List<PokePicConfig> _pokePicConfigs = [];
-        private readonly PKM _pkm;
+        private readonly VariableCollection _pkmVars;
+        private readonly ImageDictionary _pkmImgs;
         private readonly AsyncDataLoader _asyncDataLoader;
+        private readonly List<ListItemViewModel> listItemViewModels = [];
+        ListItemViewModel? selectedListItem;
 
-        public ExportForm(AsyncDataLoader asyncDataLoader, PKM pk)
+        public ExportForm(AsyncDataLoader asyncDataLoader, PKM pkm)
         {
-            _pkm = pk;
+            _pkmVars = PkmHelper.GetVariables(pkm);
+            _pkmImgs = PkmHelper.GetImages(pkm);
+
             _asyncDataLoader = asyncDataLoader;
 
             StartPosition = FormStartPosition.CenterParent;
             InitializeComponent();
 
             PreviewBox.SizeMode = PictureBoxSizeMode.CenterImage;
-            //LoadFiles();
+            SaveButton.Enabled = false;
 
             _asyncDataLoader.ProcessorLoaded += _asyncDataLoader_ItemLoaded;
 
             foreach (var namedProcessor in _asyncDataLoader.NamedProcessors)
             {
-                var vm = new ListItemViewModel()
-                {
-                    Text = namedProcessor.Name,
-                    Errors = [.. namedProcessor.Errors.Select(err => err.Message)]
-                };
-
-                var control = new ListItemControl()
-                {
-                    ViewModel = vm,
-                    Dock = DockStyle.Top
-                };
-
-                control.Click += (s, e) =>
-                {
-                    MessageBox.Show($"Clicked on {namedProcessor.Name}");
-                };
-
-                //var config = new PokePicConfig(Path.GetDirectoryName(namedProcessor.Name) ?? "");
-                //_pokePicConfigs.Add(config);
-                //ConfigList.Items.Add(control);
-                listPanel.Controls.Add(control);
-                control.BringToFront();
+                AddProcessor(namedProcessor);
             }
+        }
+
+        private void AddProcessor(NamedProcessor namedProcessor)
+        {
+            var vm = new ListItemViewModel(namedProcessor, _pkmVars, _pkmImgs);
+            vm.PropertyChanged += ListItem_PropertyChanged;
+            listItemViewModels.Add(vm);
+
+            var control = new ListItemControl(vm);
+
+            listPanel.Controls.Add(control);
+            control.BringToFront();
+        }
+
+        private void ListItem_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (sender is not ListItemViewModel vm)
+                return;
+
+            if (e.PropertyName == nameof(ListItemViewModel.Selected))
+            {
+                // If this is selected, unselect all the others
+                if (!vm.Selected)
+                    return;
+
+                selectedListItem = vm;
+
+                foreach (var item in listItemViewModels)
+                {
+                    if (item != vm)
+                        item.Unselect();
+                }
+            }
+
+            if (selectedListItem == vm)
+                LoadPreview(vm.Image);
+
+
         }
 
         private void _asyncDataLoader_ItemLoaded(NamedProcessor obj)
         {
-            throw new NotImplementedException();
+            AddProcessor(obj);
         }
 
-        private void LoadFiles()
-        {
-            var directories = Directory.GetDirectories("PokePic");
-
-            foreach (var directory in directories)
-            {
-                var configFileFullPath = Path.Combine(directory, "config.xml");
-                if (File.Exists(configFileFullPath))
-                {
-                    var configDirectoryName = new DirectoryInfo(directory).Name;
-                    var config = new PokePicConfig(directory);
-                    _pokePicConfigs.Add(config);
-                    ConfigList.Items.Add(config.Name);
-                }
-            }
-
-            if (_pokePicConfigs.Count == 0)
-            {
-                MessageBox.Show("No valid configuration folders found");
-                return;
-            }
-
-            ConfigList.SelectedValueChanged += ConfigList_SelectedValueChanged;
-            ConfigList.SelectedIndex = 0;
-        }
 
         private void ConfigList_SelectedValueChanged(object? sender, EventArgs e)
         {
-            LoadPreview(ConfigList.SelectedIndex);
+            //LoadPreview(ConfigList.SelectedIndex);
         }
 
-        async void LoadPreview(int index)
+        
+        void LoadPreview(Image? preview)
         {
             try
             {
-                var config = _pokePicConfigs[index];
-                Image image = null;
-
-                var result = await CreateImage(_pkm, config.ConfigFile);
-
-                if (File.Exists(config.PreviewFileJpg))
-                {
-                    image = Image.FromFile(config.PreviewFileJpg);
-                }
-                else if (File.Exists(config.PreviewFilePng))
-                {
-                    image = Image.FromFile(config.PreviewFilePng);
-                }
-                else if (result.Success)
-                {
-                    image = result.Bitmap!;
-                }
-                else
+                if (preview == null)
                 {
                     PreviewBox.Image = null;
+                    SaveButton.Enabled = false;
                     return;
                 }
 
-                var resized = ResizeToFit(PreviewBox, image);
+                var resized = ResizeToFit(PreviewBox, preview);
 
                 int xPad = 0, yPad = 0;
                 if (resized.Width < PreviewBox.Width)
@@ -137,6 +119,7 @@ namespace PKHeX.PokePic
 
                 PreviewBox.Image = resized;
                 PreviewBox.Padding = new Padding(xPad, yPad, 0, 0);
+                SaveButton.Enabled = true;
 
                 return;
             }
@@ -147,7 +130,7 @@ namespace PKHeX.PokePic
 
             PreviewBox.Image = null;
         }
-
+        
         static public Image ResizeToFit(PictureBox pbox, Image img)
         {
             pbox.SizeMode = PictureBoxSizeMode.Normal;
@@ -208,79 +191,30 @@ namespace PKHeX.PokePic
             return resized;
         }
 
-
-        static async Task<ProcessResult> CreateImage(PKM pk, string configFile)
-        {
-
-            var loaderResult = XmlPictureLoader.LoadXml(configFile);
-
-            var result = loaderResult.Processor.Process();
-            //PkmHelper.AddVariables(creator, pk);
-            //PkmHelper.AddImages(creator, pk);
-
-            //var result = await creator.Process(configFile);
-
-            return result;
-        }
-
-        static async void SaveImage(PKM pk, string configFile)
-        {
-            var result = await CreateImage(pk, configFile);
-
-            foreach (var error in result.Errors)
-                Console.WriteLine($"ERR: {error.Message}");
-
-            var message = string.Join(Environment.NewLine, result.Errors.Select(e => e.Message).ToArray());
-
-            if (result.Success)
-            {
-                var title = "SUCCESS!";
-                if (result.Errors.Length > 0)
-                {
-                    title += string.Format(" ({0} error{1})", result.Errors.Length, result.Errors.Length > 1 ? "s" : "");
-                    message += Environment.NewLine;
-                    message += Environment.NewLine;
-                    message += "Fix your configuration file for a better result!";
-                }
-                MessageBox.Show(message, title);
-                result.Bitmap!.Save("result.png", System.Drawing.Imaging.ImageFormat.Png);
-            }
-            else
-            {
-                var title = string.Format("FAIL! ({0} error{1})", result.Errors.Length, result.Errors.Length > 1 ? "s" : "");
-                message += Environment.NewLine;
-                message += Environment.NewLine;
-                message += "Fix your configuration file and try again";
-                MessageBox.Show(message, title);
-            }
-        }
-
-
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            var index = ConfigList.SelectedIndex;
-
-            SaveImage(_pkm, _pokePicConfigs[index].ConfigFile);
+            string filename = "result.png";
+            try
+            {
+                selectedListItem?.Image.Save(filename);
+                MessageBox.Show($"Picture saved as {filename}", "SUCCESS");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ERROR"); ;
+            }
+            
         }
 
         private void ExportForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             _asyncDataLoader.ProcessorLoaded -= _asyncDataLoader_ItemLoaded;
+
+            foreach (var listItemControl in listItemViewModels)
+                listItemControl.PropertyChanged -= ListItem_PropertyChanged;
+            
         }
     }
 
-    class PokePicConfig
-    {
-        readonly string DirectoryPath;
-
-        public string Name => new DirectoryInfo(DirectoryPath).Name;
-        public string ConfigFile => Path.Combine(DirectoryPath, "config.xml");
-        public string PreviewFileJpg => Path.Combine(DirectoryPath, "preview.jpg");
-        public string PreviewFilePng => Path.Combine(DirectoryPath, "preview.png");
-
-        public PokePicConfig(string directory)
-        {
-            DirectoryPath = Path.GetFullPath(directory);
-        }
-    }
+    
 }

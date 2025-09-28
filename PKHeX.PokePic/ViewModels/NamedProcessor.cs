@@ -7,7 +7,7 @@ using XmlPictureCreation;
 
 namespace PKHeX.PokePic.ViewModels
 {
-    public record NamedProcessor(string Name, XmlPictureProcessor? Processor, IEnumerable<Exception> Errors)
+    public record NamedProcessor(string Name, LoadResult LoadResult)
     {
     }
 }

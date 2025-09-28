@@ -30,7 +30,9 @@ namespace PKHeX.PokePic
         {
             lblText = new Label();
             pictureBoxAlert = new PictureBox();
+            pictureBoxLoading = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBoxAlert).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxLoading).BeginInit();
             SuspendLayout();
             // 
             // lblText
@@ -53,15 +55,27 @@ namespace PKHeX.PokePic
             pictureBoxAlert.TabIndex = 1;
             pictureBoxAlert.TabStop = false;
             // 
+            // pictureBoxLoading
+            // 
+            pictureBoxLoading.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pictureBoxLoading.Image = Properties.Resources.loading;
+            pictureBoxLoading.Location = new Point(109, 5);
+            pictureBoxLoading.Name = "pictureBoxLoading";
+            pictureBoxLoading.Size = new Size(16, 16);
+            pictureBoxLoading.TabIndex = 2;
+            pictureBoxLoading.TabStop = false;
+            // 
             // ListItemControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(pictureBoxLoading);
             Controls.Add(pictureBoxAlert);
             Controls.Add(lblText);
             Name = "ListItemControl";
             Size = new Size(150, 25);
             ((System.ComponentModel.ISupportInitialize)pictureBoxAlert).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxLoading).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -70,5 +84,6 @@ namespace PKHeX.PokePic
 
         private Label lblText;
         private PictureBox pictureBoxAlert;
+        private PictureBox pictureBoxLoading;
     }
 }

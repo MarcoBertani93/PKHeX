@@ -8,368 +8,139 @@
         <Image name="gender_female" file="gender_female.png"/>
         <Image name="gender_neutral" file="gender_neutral.png"/>
 
-        <Image name="type1_icon">
-            <File value="types10x10/{0}.png">
-                <String ref="type1.name.en"/>
-            </File>
-        </Image>
-        <Image name="type2_icon">
-            <File value="types10x10/{0}.png">
-                <String ref="type2.name.en"/>
-            </File>
-        </Image>
-        <Image name="move1type_icon">
-            <File value="types10x10/{0}.png">
-                <String ref="move1.type.name.en"/>
-            </File>
-        </Image>
-        <Image name="move2type_icon">
-            <File value="types10x10/{0}.png">
-                <String ref="move2.type.name.en"/>
-            </File>
-        </Image>
-        <Image name="move3type_icon">
-            <File value="types10x10/{0}.png">
-                <String ref="move3.type.name.en"/>
-            </File>
-        </Image>
-        <Image name="move4type_icon">
-            <File value="types10x10/{0}.png">
-                <String ref="move4.type.name.en"/>
-            </File>
-        </Image>
-
-
+        <Image name="type1_icon" file="types10x10/{type1.name.en}.png"/>
+        <Image name="type2_icon" file="types10x10/{type2.name.en}.png"/>
+        <Image name="move1type_icon" file="types10x10/{move1.type.name.en}.png"/>
+        <Image name="move2type_icon" file="types10x10/{move2.type.name.en}.png"/>
+        <Image name="move3type_icon" file="types10x10/{move3.type.name.en}.png"/>
+        <Image name="move4type_icon" file="types10x10/{move4.type.name.en}.png"/>
     </Resources>
 
     <Graphics>
 
         <!-- Background shadow -->
-        <Rectangle area="2,2,190,126" radius="10">
-            <Color>#00000080</Color>
-        </Rectangle>
+        <Rectangle area="2,2,190,126" radius="10" color="#00000080"/>
 
         <!-- Background -->
         <Rectangle area="1,1,190,126" radius="10">
             <Color>
                 <Linear start="0,0" end="192,0">
                     <Stops>
-                        <Stop position="0">
-                            <Solid ref="type1.color"/>
-                        </Stop>
-                        <Stop position="1">
-                            <Solid ref="type2.color"/>
-                        </Stop>
+                        <Stop position="0" solid="{type1.color}"/>
+                        <Stop position="1" solid="{type2.color}"/>
                     </Stops>
                 </Linear>
             </Color>
         </Rectangle>
 
         <!-- Graphics elements -->
-        <Image area="0,0,192,128" name="graphics">
-        </Image>
+        <Image area="0,0,192,128" name="graphics"/>
 
-        <!-- Pokemon name -->
-        <Text area="44,5,106,15" color="#000000" anchor="MiddleCenter">
-            <Font ref="title"/>
-            <!-- UPPERCASE -->
-            <String value="{0:U}">
-                <String ref="species.name.en"/>
-            </String>
-        </Text>
+        <!-- Pokemon name (UPPERCASE) -->
+        <Text area="44,5,106,15" color="#000000" anchor="MiddleCenter" font="{title}" string="{species.name.en:U}"/>
 
         <!-- Pokemon level -->
-        <Text area="24,9,22,8" color="#FFFFFF" anchor="MiddleCenter">
+        <Text area="24,9,22,8" color="#FFFFFF" anchor="MiddleCenter" string="{level}">
             <Font family="pixelated" size="6" antialias="false"/>
-            <String value="{0}">
-                <Number ref="level"/>
-            </String>
         </Text>
 
         <!-- Pokemon type icons -->
         <Image area="7,7,10,10" name="type1_icon"/>
-        <Image area="175,7,10,10" name="type2_icon">
-            <Visible ref="hasType2"/>
-        </Image>
+        <Image area="175,7,10,10" name="type2_icon" visible="{hasType2}"/>
 
         <!-- Pokemon sprite -->
-        <Image area="1,22,68,56" name="species.sprite">
-        </Image>
+        <Image area="1,22,68,56" name="species.sprite"/>
 
         <!--  Ball sprite -->
-        <Image area="5,65,20,20" name="ball.sprite">
-        </Image>
+        <Image area="5,65,20,20" name="ball.sprite"/>
 
         <!-- Gender icons -->
-        <Image area="153,5,13,13" name="gender_male">
-            <Visible ref="gender.isMale"/>
-        </Image>
-
-        <Image area="153,5,13,13" name="gender_female">
-            <Visible ref="gender.isFemale"/>
-        </Image>
-
-        <Image area="153,5,13,13" name="gender_neutral">
-            <Visible ref="gender.isNeutral"/>
-        </Image>
+        <Image area="153,5,13,13" name="gender_male" visible="{gender.isMale}"/>
+        <Image area="153,5,13,13" name="gender_female" visible="{gender.isFemale}"/>
+        <Image area="153,5,13,13" name="gender_neutral" visible="{gender.isNeutral}"/>
 
         <!-- Nature -->
-        <Text area="20,89,60,10" ref="default_left">
-            <String ref="nature.name.en"/>
-        </Text>
+        <Text area="20,89,60,10" ref="default_left" string="{nature.name.en}"/>
 
         <!-- Ability -->
-        <Text area="20,101,60,10" ref="default_left">
-            <String ref="ability.name.en"/>
-        </Text>
+        <Text area="20,101,60,10" ref="default_left" string="{ability.name.en}"/>
 
         <!-- Held Item -->
-        <Text area="20,113,60,10" ref="default_left">
-            <String ref="heldItem.name.en"/>
-        </Text>
+        <Text area="20,113,60,10" ref="default_left" string="{heldItem.name.en}"/>
 
         <!-- ___Moves___ -->
 
         <!-- Move 1 -->
-        <Rectangle area="86,76,10,10">
-            <Color>
-                <Solid ref="move1.type.color"/>
-            </Color>
+        <Rectangle area="86,76,10,10" color="">
+            <Color solid="{move1.type.color}"/>
         </Rectangle>
-
         <Image area="86,76,10,10" name="move1type_icon"/>
-
-        <Text area="100,77,68,10" ref="default_left">
-            <String ref="move1.name.en"/>
-        </Text>
-
-        <Text area="170,77,16,10" ref="default_right">
-            <String value="{0}">
-                <Number ref="move1.pp"/>
-            </String>
-        </Text>
+        <Text area="100,77,68,10" ref="default_left" string="{move1.name.en}"/>
+        <Text area="170,77,16,10" ref="default_right" string="{move1.pp}"/>
 
         <!-- Move 2 -->
-        <Rectangle area="86,88,10,10">
-            <Visible ref="hasMove2"/>
-            <Color>
-                <Solid ref="move2.type.color"/>
-            </Color>
+        <Rectangle area="86,88,10,10" visible="{hasMove2}">
+            <Color solid="{move2.type.color}"/>
         </Rectangle>
-
-        <Image area="86,88,10,10" name="move2type_icon">
-            <Visible ref="hasMove2"/>
-        </Image>
-
-        <Text area="100,89,68,10" ref="default_left">
-            <Visible ref="hasMove2"/>
-            <String ref="move2.name.en"/>
-        </Text>
-
-        <Text area="170,89,16,10" ref="default_right">
-            <Visible ref="hasMove2"/>
-            <String value="{0}">
-                <Number ref="move2.pp"/>
-            </String>
+        <Image area="86,88,10,10" name="move2type_icon" visible="{hasMove2}"/>
+        <Text area="100,89,68,10" ref="default_left" string="{move2.name.en}" visible="{hasMove2}"/>
+        <Text area="170,89,16,10" ref="default_right" string="{move2.pp}" visible="{hasMove2}">
         </Text>
 
         <!-- Move 3 -->
-        <Rectangle area="86,100,10,10">
-            <Visible ref="hasMove3"/>
-            <Color>
-                <Solid ref="move3.type.color"/>
-            </Color>
+        <Rectangle area="86,100,10,10" visible="{hasMove3}">
+            <Color solid="{move3.type.color}"/>
         </Rectangle>
-
-        <Image area="86,100,10,10" name="move3type_icon">
-            <Visible ref="hasMove3"/>
-        </Image>
-
-        <Text area="100,101,68,10" ref="default_left">
-            <Visible ref="hasMove3"/>
-            <String ref="move3.name.en"/>
-        </Text>
-
-        <Text area="170,101,16,10" ref="default_right">
-            <Visible ref="hasMove3"/>
-            <String value="{0}">
-                <Number ref="move3.pp"/>
-            </String>
-        </Text>
+        <Image area="86,100,10,10" name="move3type_icon" visible="{hasMove3}"/>
+        <Text area="100,101,68,10" ref="default_left" string="{move3.name.en}" visible="{hasMove3}"/>
+        <Text area="170,101,16,10" ref="default_right" string="{move3.pp}" visible="{hasMove3}"/>
 
         <!-- Move 4 -->
-        <Rectangle area="86,112,10,10">
-            <Visible ref="hasMove4"/>
-            <Color>
-                <Solid ref="move4.type.color"/>
-            </Color>
+        <Rectangle area="86,112,10,10" visible="{hasMove4}">
+            <Color solid="{move4.type.color}"/>
         </Rectangle>
-
-        <Image area="86,112,10,10" name="move4type_icon">
-            <Visible ref="hasMove4"/>
-        </Image>
-
-        <Text area="100,113,68,10" ref="default_left">
-            <Visible ref="hasMove4"/>
-            <String ref="move4.name.en"/>
-        </Text>
-
-        <Text area="170,113,16,10" ref="default_right">
-            <Visible ref="hasMove4"/>
-            <String value="{0}">
-                <Number ref="move4.pp"/>
-            </String>
-        </Text>
+        <Image area="86,112,10,10" name="move4type_icon" visible="{hasMove4}"/>
+        <Text area="100,113,68,10" ref="default_left" string="{move4.name.en}" visible="{hasMove4}"/>
+        <Text area="170,113,16,10" ref="default_right" string="{move3.pp}" visible="{hasMove4}"/>
 
         <!-- ___HP___ -->
-        <!-- IVs -->
-        <Text area="80,32,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.iv.hp"/>
-            </String>
-        </Text>
-
-        <!-- EVs -->
-        <Text area="80,42,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.ev.hp"/>
-            </String>
-        </Text>
-
-        <!-- Val -->
-        <Text area="80,54,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.val.hp"/>
-            </String>
-        </Text>
+        <Text area="80,32,16,8" ref="default_right" string="{stats.iv.hp}"/>
+        <Text area="80,42,16,8" ref="default_right" string="{stats.ev.hp}"/>
+        <Text area="80,54,16,8" ref="default_right" string="{stats.val.hp}"/>
 
         <!-- ___Atk___ -->
-        <!-- IVs -->
-        <Text area="98,32,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.iv.atk"/>
-            </String>
-        </Text>
-
-        <!-- EVs -->
-        <Text area="98,42,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.ev.atk"/>
-            </String>
-        </Text>
-
-        <!-- Val -->
-        <Text area="98,54,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.val.atk"/>
-            </String>
-        </Text>
+        <Text area="98,32,16,8" ref="default_right" string="{stats.iv.atk}"/>
+        <Text area="98,42,16,8" ref="default_right" string="{stats.ev.atk}"/>
+        <Text area="98,54,16,8" ref="default_right" string="{stats.val.atk}"/>
 
         <!-- ___Def___ -->
-        <!-- IVs -->
-        <Text area="116,32,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.iv.def"/>
-            </String>
-        </Text>
-
-        <!-- EVs -->
-        <Text area="116,42,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.ev.def"/>
-            </String>
-        </Text>
-
-        <!-- Val -->
-        <Text area="116,54,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.val.def"/>
-            </String>
-        </Text>
+        <Text area="116,32,16,8" ref="default_right" string="{stats.iv.def}"/>
+        <Text area="116,42,16,8" ref="default_right" string="{stats.ev.def}"/>
+        <Text area="116,54,16,8" ref="default_right" string="{stats.val.def}"/>
 
         <!-- ___SpA___ -->
-        <!-- IVs -->
-        <Text area="134,32,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.iv.spa"/>
-            </String>
-        </Text>
-
-        <!-- EVs -->
-        <Text area="134,42,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.ev.spa"/>
-            </String>
-        </Text>
-
-        <!-- Val -->
-        <Text area="134,54,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.val.spa"/>
-            </String>
-        </Text>
+        <Text area="134,32,16,8" ref="default_right" string="{stats.iv.spa}"/>
+        <Text area="134,42,16,8" ref="default_right" string="{stats.ev.spa}"/>
+        <Text area="134,54,16,8" ref="default_right" string="{stats.val.spa}"/>
 
         <!-- ___SpD___ -->
-        <!-- IVs -->
-        <Text area="152,32,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.iv.spd"/>
-            </String>
-        </Text>
-
-        <!-- EVs -->
-        <Text area="152,42,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.ev.spd"/>
-            </String>
-        </Text>
-
-        <!-- Val -->
-        <Text area="152,54,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.val.spd"/>
-            </String>
-        </Text>
+        <Text area="152,32,16,8" ref="default_right" string="{stats.iv.spd}"/>
+        <Text area="152,42,16,8" ref="default_right" string="{stats.ev.spd}"/>
+        <Text area="152,54,16,8" ref="default_right" string="{stats.val.spd}"/>
 
         <!-- ___Spe___ -->
-        <!-- IVs -->
-        <Text area="170,32,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.iv.spe"/>
-            </String>
-        </Text>
-
-        <!-- EVs -->
-        <Text area="170,42,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.ev.spe"/>
-            </String>
-        </Text>
-
-        <!-- Val -->
-        <Text area="170,54,16,8" ref="default_right">
-            <String value="{0}">
-                <Number ref="stats.val.spe"/>
-            </String>
-        </Text>
-
-
+        <Text area="170,32,16,8" ref="default_right" string="{stats.iv.spe}"/>
+        <Text area="170,42,16,8" ref="default_right" string="{stats.ev.spe}"/>
+        <Text area="170,54,16,8" ref="default_right" string="{stats.val.spe}"/>
 
     </Graphics>
 
     <Variables>
-        <String id="pokemonName">Hypno</String>
-
         <Font id="default" family="pixelated" size="8"></Font>
         <Font id="title" family="title" size="12" antialias="false"></Font>
 
-        <Text id="default_left" color="#000000" method="3">
-            <Font ref="default"/>
-        </Text>
-
-        <Text id="default_right" color="#000000" anchor="TopRight" method="3">
-            <Font ref="default"/>
-        </Text>
+        <Text id="default_left" color="#000000" font="{default}" method="3"/>
+        <Text id="default_right" color="#000000" font="{default}"  anchor="TopRight" method="3"/>
     </Variables>
 
 </ImageConfig>

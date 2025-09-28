@@ -40,7 +40,7 @@ namespace PKHeX.PokePic.Helpers
 
             var result = await XmlPictureLoader.LoadXmlAsync(file);
 
-            var namedProcessor = new NamedProcessor(name, result.Processor, result.Errors); 
+            var namedProcessor = new NamedProcessor(name, result); 
             NamedProcessors.Add(namedProcessor);
             ProcessorLoaded?.Invoke(namedProcessor);
         }

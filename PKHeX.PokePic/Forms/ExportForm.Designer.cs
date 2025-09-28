@@ -30,7 +30,6 @@ namespace PKHeX.PokePic
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExportForm));
             SaveButton = new Button();
-            ConfigList = new ListBox();
             PreviewBox = new PictureBox();
             listPanel = new Panel();
             ((System.ComponentModel.ISupportInitialize)PreviewBox).BeginInit();
@@ -39,7 +38,7 @@ namespace PKHeX.PokePic
             // SaveButton
             // 
             SaveButton.AccessibleName = "SaveButton";
-            SaveButton.Location = new Point(497, 326);
+            SaveButton.Location = new Point(462, 338);
             SaveButton.Name = "SaveButton";
             SaveButton.Size = new Size(75, 23);
             SaveButton.TabIndex = 2;
@@ -47,21 +46,12 @@ namespace PKHeX.PokePic
             SaveButton.UseVisualStyleBackColor = true;
             SaveButton.Click += SaveButton_Click;
             // 
-            // ConfigList
-            // 
-            ConfigList.AccessibleName = "Config List";
-            ConfigList.FormattingEnabled = true;
-            ConfigList.Location = new Point(372, 12);
-            ConfigList.Name = "ConfigList";
-            ConfigList.Size = new Size(169, 304);
-            ConfigList.TabIndex = 3;
-            // 
             // PreviewBox
             // 
             PreviewBox.AccessibleName = "Preview Box";
             PreviewBox.Location = new Point(12, 12);
             PreviewBox.Name = "PreviewBox";
-            PreviewBox.Size = new Size(354, 304);
+            PreviewBox.Size = new Size(320, 320);
             PreviewBox.TabIndex = 4;
             PreviewBox.TabStop = false;
             // 
@@ -70,19 +60,18 @@ namespace PKHeX.PokePic
             listPanel.AutoScroll = true;
             listPanel.BackColor = SystemColors.Window;
             listPanel.BorderStyle = BorderStyle.FixedSingle;
-            listPanel.Location = new Point(547, 12);
+            listPanel.Location = new Point(338, 12);
             listPanel.Name = "listPanel";
-            listPanel.Size = new Size(199, 304);
+            listPanel.Size = new Size(199, 320);
             listPanel.TabIndex = 5;
             // 
             // ExportForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(758, 361);
+            ClientSize = new Size(549, 371);
             Controls.Add(listPanel);
             Controls.Add(PreviewBox);
-            Controls.Add(ConfigList);
             Controls.Add(SaveButton);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -95,7 +84,6 @@ namespace PKHeX.PokePic
 
         #endregion
         private System.Windows.Forms.Button SaveButton;
-        private System.Windows.Forms.ListBox ConfigList;
         private PictureBox PreviewBox;
         private Panel listPanel;
     }

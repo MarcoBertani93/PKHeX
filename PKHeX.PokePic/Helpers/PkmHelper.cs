@@ -16,7 +16,7 @@ namespace PKHeX.PokePic.Helpers
     {
         private static readonly Assembly? pokeSpriteAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "PKHeX.Drawing.PokeSprite");
 
-        public static VariableCollection AddVariables( PKM pkm)
+        public static VariableCollection GetVariables( PKM pkm)
         {
             VariableCollection variables = [];
 
@@ -211,7 +211,7 @@ namespace PKHeX.PokePic.Helpers
             variables.Add($"ball.name.{lang}", localized_Strings.balllist[pkm.Ball]);
         }
 
-        public static ImageDictionary AddImages(PKM pkm)
+        public static ImageDictionary GetImages(PKM pkm)
         {
             var images = new ImageDictionary();
             // Try and get the current sprite by loading the PokeSprite assembly that contains the extension method for the sprite:
