@@ -1,4 +1,4 @@
-<ImageConfig width="68" height="56">
+<Config width="68" height="56">
 
     <Resources>
         <Image name="sprite">
@@ -42,4 +42,4 @@
         <String id="pokemonName">Hypno</String>
     </Variables>
 
-</ImageConfig>
+</Config>

@@ -16,19 +16,13 @@ namespace PKHeX.PokePic.Helpers
     {
         private static readonly Assembly? pokeSpriteAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "PKHeX.Drawing.PokeSprite");
 
-        public static VariableCollection GetVariables( PKM pkm)
+        public static VariableCollection GetVariables(PKM pkm)
         {
             VariableCollection variables = [];
 
-            var str = GameInfo.Strings = GameInfo.GetStrings("it");
+            variables.Add($"system.language", GameInfo.CurrentLanguage);    // Current app languge: "en", "it", "jp", ... 
 
-            // Look LocalizeUtil
-            GameStrings localized_Strings;
-
-
-            var species = pkm.Species;
-
-            variables.Add($"species", species);
+            variables.Add($"species", pkm.Species);
             variables.Add($"level", pkm.CurrentLevel);
             variables.Add($"generation", pkm.Generation);
             variables.Add($"type1", pkm.PersonalInfo.Type1);
@@ -133,7 +127,6 @@ namespace PKHeX.PokePic.Helpers
             AddLocalizedVariables(pkm, variables, LanguageID.ChineseS.GetLanguageCode());
             AddLocalizedVariables(pkm, variables, LanguageID.ChineseT.GetLanguageCode());
 
-
             var getTypeSpriteColor = pokeSpriteAssembly?.GetTypes()
               .Where(t => t.IsSealed && t.IsAbstract) // class statica
               .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
@@ -156,16 +149,6 @@ namespace PKHeX.PokePic.Helpers
                 var move4color = (Color)getTypeSpriteColor?.Invoke(null, [MoveInfo.GetType(pkm.Move4, pkm.Context)])!;
                 variables.Add("move4.type.color", move4color);
             }
-
-#if DEBUG
-            Dictionary<string, object> dict = new Dictionary<string, object>();
-
-            variables.GetBooleans().ToList().ForEach(v => dict.Add(v.Id!, v.Value!));
-            variables.GetNumbers().ToList().ForEach(v => dict.Add(v.Id!, v.Value!));
-            variables.GetStrings().ToList().ForEach(v => dict.Add(v.Id!, v.Value!));
-
-            var serialized = JsonSerializer.Serialize(dict, new JsonSerializerOptions { WriteIndented = true });
-#endif
             return variables;
         }
 
@@ -216,6 +199,9 @@ namespace PKHeX.PokePic.Helpers
             var images = new ImageDictionary();
             // Try and get the current sprite by loading the PokeSprite assembly that contains the extension method for the sprite:
 
+            if (pokeSpriteAssembly is null)
+                return images;
+
             var getSprite = pokeSpriteAssembly?.GetTypes()
                 .Where(t => t.IsSealed && t.IsAbstract) // class statica
                 .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
@@ -228,8 +214,6 @@ namespace PKHeX.PokePic.Helpers
                 images.Add("species.sprite", sprite);
             }
 
-
-
             var getBallSprite = pokeSpriteAssembly?.GetTypes()
                .Where(t => t.IsSealed && t.IsAbstract) // class statica
                .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
@@ -240,7 +224,6 @@ namespace PKHeX.PokePic.Helpers
                 var sprite = (Bitmap)getBallSprite?.Invoke(null, [pkm.Ball])!;
                 images.Add("ball.sprite", sprite);
             }
-
 
             var getItemSprite = pokeSpriteAssembly?.GetTypes()
                .Where(t => t.IsSealed && t.IsAbstract) // class statica

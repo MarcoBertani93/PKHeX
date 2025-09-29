@@ -36,12 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="XmlPictureCreation">
-      <HintPath>..\..\..\XmlPictureCreation\XmlPictureCreation\bin\Debug\net8.0-windows\XmlPictureCreation.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -63,10 +57,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="plugins\XmlPictureCreation.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="plugins\XmlPictureCreation.pdb">
+    <None Update="plugins\AutoModPlugins.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="PokePic\Spotlight\config.xml">
@@ -156,6 +147,10 @@
     <None Update="PokePic\Sprite\regular\hypno.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="plugins\" />
   </ItemGroup>
 
 </Project>

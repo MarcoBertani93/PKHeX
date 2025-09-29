@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,6 @@ using XmlPictureCreation.Aliases;
 
 namespace PKHeX.PokePic
 {
-
     public partial class ExportForm : Form
     {
         private readonly VariableCollection _pkmVars;
@@ -27,10 +27,18 @@ namespace PKHeX.PokePic
         private readonly List<ListItemViewModel> listItemViewModels = [];
         ListItemViewModel? selectedListItem;
 
-        public ExportForm(AsyncDataLoader asyncDataLoader, PKM pkm)
+        private readonly PKM _previewPkm;
+        private readonly PKM[]? _boxPkm;
+
+
+        // This is true when trying to export the entire box and not the selected Pokémon
+        private readonly bool _isExportingBox;
+        
+        public ExportForm(AsyncDataLoader asyncDataLoader, PKM previewPkm)
         {
-            _pkmVars = PkmHelper.GetVariables(pkm);
-            _pkmImgs = PkmHelper.GetImages(pkm);
+            _previewPkm = previewPkm;
+            _pkmVars = PkmHelper.GetVariables(previewPkm);
+            _pkmImgs = PkmHelper.GetImages(previewPkm);
 
             _asyncDataLoader = asyncDataLoader;
 
@@ -40,12 +48,29 @@ namespace PKHeX.PokePic
             PreviewBox.SizeMode = PictureBoxSizeMode.CenterImage;
             SaveButton.Enabled = false;
 
-            _asyncDataLoader.ProcessorLoaded += _asyncDataLoader_ItemLoaded;
+            _asyncDataLoader.ProcessorLoaded += AsyncDataLoader_ItemLoaded;
 
+            bool shouldSelect = true;
             foreach (var namedProcessor in _asyncDataLoader.NamedProcessors)
             {
                 AddProcessor(namedProcessor);
+                shouldSelect = false;
             }
+        }
+
+        // Takes as preview pkm the first valid box
+        public ExportForm(AsyncDataLoader asyncDataLoader, PKM[] boxPkm) : this(asyncDataLoader, boxPkm.First(p => p.Species != 0))
+        {
+            _isExportingBox = true;
+
+            _boxPkm = boxPkm;
+
+            SaveButton.Text = "Export Box";
+        }
+
+        private void ExportForm_Load(object sender, EventArgs e)
+        {
+            listItemViewModels[0]?.Select();
         }
 
         private void AddProcessor(NamedProcessor namedProcessor)
@@ -86,7 +111,7 @@ namespace PKHeX.PokePic
 
         }
 
-        private void _asyncDataLoader_ItemLoaded(NamedProcessor obj)
+        private void AsyncDataLoader_ItemLoaded(NamedProcessor obj)
         {
             AddProcessor(obj);
         }
@@ -97,7 +122,7 @@ namespace PKHeX.PokePic
             //LoadPreview(ConfigList.SelectedIndex);
         }
 
-        
+
         void LoadPreview(Image? preview)
         {
             try
@@ -130,13 +155,14 @@ namespace PKHeX.PokePic
 
             PreviewBox.Image = null;
         }
-        
+
         static public Image ResizeToFit(PictureBox pbox, Image img)
         {
             pbox.SizeMode = PictureBoxSizeMode.Normal;
             bool img_is_wider = (float)img.Width / img.Height > (float)pbox.Width / pbox.Height;
 
-            float dest_width = 0, dest_height = 0;
+            float dest_width;
+            float dest_height;
 
             if (img_is_wider)
             {
@@ -153,8 +179,8 @@ namespace PKHeX.PokePic
 
             using (var g = Graphics.FromImage(resized))
             {
-                Rectangle src_rect = new Rectangle(0, 0, img.Width, img.Height);
-                Rectangle dest_rect = new Rectangle(0, 0, resized.Width, resized.Height);
+                Rectangle src_rect = new(0, 0, img.Width, img.Height);
+                Rectangle dest_rect = new(0, 0, resized.Width, resized.Height);
                 g.DrawImage(img, dest_rect, src_rect, GraphicsUnit.Pixel);
             }
             return resized;
@@ -191,30 +217,127 @@ namespace PKHeX.PokePic
             return resized;
         }
 
-        private void SaveButton_Click(object sender, EventArgs e)
+        private async void SaveButton_Click(object sender, EventArgs e)
         {
-            string filename = "result.png";
+            if (_isExportingBox)
+                await ExportSingleBox();
+            else
+                ExportSinglePkm();
+        }
+
+        private void ExportSinglePkm()
+        {
+            // This method takes advantage of the already loaded preview and saves that as picture
             try
             {
-                selectedListItem?.Image.Save(filename);
-                MessageBox.Show($"Picture saved as {filename}", "SUCCESS");
+                if (TryGetSaveFile(_previewPkm.FileNameWithoutExtension + ".png", out string filename))
+                {
+                    selectedListItem?.Image.Save(filename);
+                    MessageBox.Show($"Picture saved as {filename}", "SUCCESS");
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "ERROR"); ;
             }
-            
         }
+
+        private async Task ExportSingleBox()
+        {
+            // This method has to process all pokemons from the box through the processor
+            if (!TryGetFolder(out var folder))
+                return;
+
+            try
+            {
+                foreach (var pkm in _boxPkm)
+                {
+                    var pkmVars = PkmHelper.GetVariables(pkm);
+                    var pkmImgs = PkmHelper.GetImages(pkm);
+
+                    var result = await selectedListItem!.Processor!.ProcessAsync(pkmVars, pkmImgs);
+
+                    if (!result.Success)
+                        continue;
+
+                    var filePath = Path.Combine(folder, pkm.FileNameWithoutExtension + ".png");
+
+                    result.Bitmap!.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+                }
+                MessageBox.Show($"Box exported successfully to {folder}", "SUCCESS");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "ERROR");
+            }
+        }
+
+        // Copied from PKHeX.WinForms
+        private bool TryGetFolder([NotNullWhen(true)] out string? folder)
+        {
+            using var fbd = new FolderBrowserDialog();
+            fbd.Description = "Select a folder to export the boxes to.";
+            fbd.ShowNewFolderButton = true;
+            var result = fbd.ShowDialog(this);
+            folder = fbd.SelectedPath;
+            return result == DialogResult.OK;
+        }
+
+        private bool TryGetSaveFile(string defaultFileName, [NotNullWhen(true)] out string? file)
+        {
+            using var saveFileDialog = new SaveFileDialog
+            {
+                Title = "Export as PNG picture",
+                Filter = "File PNG (*.png)|*.png",
+                DefaultExt = "png",
+                AddExtension = true,
+                FileName = defaultFileName
+            };
+
+            
+            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                file = saveFileDialog.FileName;
+                return true;
+            }
+            file = null;
+            return false;
+        }
+
+        /*
+        private bool TryGetOpenFile([NotNullWhen(true)] out string? file)
+        {
+            using var openFileDialog = new OpenFileDialog
+            {
+                Title = "Seleziona un file PNG",
+                Filter = "File PNG (*.png)|*.png",
+                CheckFileExists = true,
+                CheckPathExists = true,
+                Multiselect = false
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+
+                // Ad esempio, carico l'immagine in una PictureBox
+                pictureBox1.Image = Image.FromFile(filePath);
+            }
+            return true;
+        }
+        */
 
         private void ExportForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _asyncDataLoader.ProcessorLoaded -= _asyncDataLoader_ItemLoaded;
+            _asyncDataLoader.ProcessorLoaded -= AsyncDataLoader_ItemLoaded;
 
             foreach (var listItemControl in listItemViewModels)
                 listItemControl.PropertyChanged -= ListItem_PropertyChanged;
-            
+
         }
+
+        
     }
 
-    
+
 }

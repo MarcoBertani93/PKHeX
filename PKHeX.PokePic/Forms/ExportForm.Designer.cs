@@ -42,7 +42,7 @@ namespace PKHeX.PokePic
             SaveButton.Name = "SaveButton";
             SaveButton.Size = new Size(75, 23);
             SaveButton.TabIndex = 2;
-            SaveButton.Text = "Save";
+            SaveButton.Text = "Export";
             SaveButton.UseVisualStyleBackColor = true;
             SaveButton.Click += SaveButton_Click;
             // 
@@ -76,8 +76,9 @@ namespace PKHeX.PokePic
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "ExportForm";
-            Text = "PokePic_Selector";
+            Text = "Create PokéPic";
             FormClosed += ExportForm_FormClosed;
+            Load += ExportForm_Load;
             ((System.ComponentModel.ISupportInitialize)PreviewBox).EndInit();
             ResumeLayout(false);
         }

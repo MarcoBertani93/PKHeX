@@ -21,6 +21,7 @@ namespace PKHeX.PokePic.Helpers
         {
             Task.Run(LoadFilesAsync);
         }
+
         /// <summary>
         /// Searches in folder "PokePic" and subfolders for valid configuration files.
         /// </summary>

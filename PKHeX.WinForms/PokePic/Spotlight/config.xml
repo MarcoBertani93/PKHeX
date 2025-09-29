@@ -1,4 +1,4 @@
-<ImageConfig width="192" height="128">
+<Config width="192" height="128">
 
     <Resources>
         <Font family="title" file="pokemon_pixel_font.ttf"/>
@@ -49,10 +49,10 @@
         <Image area="175,7,10,10" name="type2_icon" visible="{hasType2}"/>
 
         <!-- Pokemon sprite -->
-        <Image area="1,22,68,56" name="species.sprite"/>
+        <Image area="1,22,68,56" name="species.sprite" flip="Horizontal"/>
 
         <!--  Ball sprite -->
-        <Image area="5,65,20,20" name="ball.sprite"/>
+        <Image area="5,65,20,50" name="ball.sprite" rotation="45" resize="stretch"/>
 
         <!-- Gender icons -->
         <Image area="153,5,13,13" name="gender_male" visible="{gender.isMale}"/>
@@ -143,4 +143,4 @@
         <Text id="default_right" color="#000000" font="{default}"  anchor="TopRight" method="3"/>
     </Variables>
 
-</ImageConfig>
+</Config>

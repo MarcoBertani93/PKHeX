@@ -40,6 +40,7 @@ namespace PKHeX.PokePic
             // Last action to update the UI
             ViewModel = viewModel;
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+
             UpdateUI();
         }
 
@@ -52,8 +53,7 @@ namespace PKHeX.PokePic
         protected override async void OnClick(EventArgs e)
         {
             OnMouseLeave(e);
-            ViewModel.Select();
-            await ViewModel.LoadPictureAsync();
+            await ViewModel.Select();
             base.OnClick(e);
         }
 

@@ -21,6 +21,9 @@ namespace PKHeX.PokePic
         private readonly VariableCollection _pkmVars;
         private readonly ImageDictionary _pkmImgs;
 
+        public XmlPictureProcessor? Processor => loadResult.Processor;
+        private readonly SemaphoreSlim _loadSemaphore = new (1, 1);
+
         public string Text
         {
             get => _text;
@@ -81,28 +84,38 @@ namespace PKHeX.PokePic
             _pkmVars = vars;
         }
 
-        public void Select() => Selected = true;
+        public async Task Select()
+        {
+            await LoadPictureAsync();
+            Selected = true;
+        }
+
         public void Unselect() => Selected = false;
 
 
         public async Task LoadPictureAsync()
         {
-            // Failed during loading, can't process
-            if (!loadResult.Success)
-                return;
+            await _loadSemaphore.WaitAsync();
 
-            // Already processed
-            if (processResult?.Success == true)
-                return;
-
-            Processing = true;
+            // All operations must be done insede the "try" section or the semaphore wouldn't be released
             try
             {
+                // Failed during loading, can't process
+                if (!loadResult.Success)
+                    return;
+
+                // Already processed
+                if (processResult?.Success == true)
+                    return;
+
+                Processing = true;
+
                 processResult = await loadResult.Processor!.ProcessAsync(_pkmVars, _pkmImgs);
             }
             finally
             {
                 Processing = false;
+                _loadSemaphore.Release();
             }
 
         }

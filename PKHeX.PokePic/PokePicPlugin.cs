@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -8,6 +9,7 @@ using System.Windows.Forms;
 using PKHeX.Core;
 using PKHeX.PokePic;
 using PKHeX.PokePic.Helpers;
+using PKHeX.PokePic.Properties;
 
 namespace PKHeX.WinForms
 {
@@ -36,8 +38,9 @@ namespace PKHeX.WinForms
                 Array.Find(args, z => z is ToolStrip) ?? throw new Exception("Null ToolStrip")
             );
 
-            LoadMenuStrip(menu);
+            
 
+            LoadMenuStrip(menu);
         }
 
 
@@ -49,20 +52,30 @@ namespace PKHeX.WinForms
 
             var modMenu = new ToolStripMenuItem("PokéPic") { Name = "PokePic_Menu" };
 
-            var exportPic = new ToolStripMenuItem("Export to PokéPic");
-            exportPic.Click += MainMenuSavePic;
-            modMenu.DropDownItems.Add(exportPic);
-            modMenu.DropDownItems.Add(new ToolStripMenuItem("Import from PokéPic"));
+            var exportPkm = new ToolStripMenuItem("Export to PokéPic")
+            {
+                Image = Resources.export
+            };
+            exportPkm.Click += MainMenuExportPkm;
+
+            var exportBox = new ToolStripMenuItem("Export Box to PokéPic")
+            {
+                Image = Resources.exportbox
+            };
+            exportBox.Click += MainMenuExportBox;
+
+            var importPkm = new ToolStripMenuItem("Import from a PokéPic")
+            {
+                Image = Resources.import
+            };
+            importPkm.Click += MainMenuImportPkm;
+
+            modMenu.Image = Resources.pikapic;
+            modMenu.DropDownItems.Add(exportPkm);
+            modMenu.DropDownItems.Add(exportBox);
+            modMenu.DropDownItems.Add(importPkm);
 
             tools.DropDownItems.Add(modMenu);
-
-            /*
-            if (items.Find(ParentMenuParent, false)[0] is not ToolStripDropDownItem tools)
-                return;
-            var toolsitems = tools.DropDownItems;
-            var modmenusearch = toolsitems.Find(ParentMenuName, false);
-            var modmenu = GetModMenu(tools, modmenusearch);
-            AddPluginControl(modmenu);*/
         }
 
 
@@ -79,8 +92,7 @@ namespace PKHeX.WinForms
             return false; // no action taken
         }
 
-
-        private void MainMenuSavePic(object? sender, EventArgs e)
+        private void MainMenuExportPkm(object? sender, EventArgs e)
         {
             if (PKMEditor.Data == null)
             {
@@ -90,9 +102,26 @@ namespace PKHeX.WinForms
 
             var pk = PKMEditor.Data;
 
-
             new ExportForm(dataLoader, pk).ShowDialog();
-
         }
+
+        private void MainMenuExportBox(object? sender, EventArgs e)
+        {
+            var currentBox = SaveFileEditor.CurrentBox;
+            var pkms = SaveFileEditor.SAV.GetBoxData(currentBox);
+
+            if (pkms is null || pkms.Length == 0 || !pkms.Any(p => p.Species != 0))
+            {
+                MessageBox.Show("The selected box is empty.");
+                return;
+            }
+
+            new ExportForm(dataLoader, pkms).ShowDialog();
+        }
+
+        private void MainMenuImportPkm(object? sender, EventArgs e)
+        {
+        }
+                
     }
 }
